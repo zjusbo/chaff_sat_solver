@@ -1,3 +1,9 @@
+/**
+ * Chaff SAT Solver
+ * Date: 12/5/2015
+ * input: CNF Format File
+ **/
+
 #include <iostream>
 #include <vector>
 #include <queue>
