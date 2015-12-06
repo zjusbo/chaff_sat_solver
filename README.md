@@ -9,4 +9,5 @@ Features:
  - Variable State Independent Decaying Sum(VSIDS) Decision Heuristic
 
 Reference:
- Chaff: Engineering an Efficient SAT Solver
+
+ [Chaff: Engineering an Efficient SAT Solver](https://www.princeton.edu/~chaff/publication/DAC2001v56.pdf)
