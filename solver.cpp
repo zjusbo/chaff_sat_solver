@@ -1,9 +1,3 @@
-/**
- * Chaff SAT Solver
- * Date: 12/5/2015
- * input: CNF Format File
- **/
-
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -14,10 +8,12 @@
 #include <unordered_map>
 #include <string>
 #include <ctime>
-#include <chrono>
-
+//#include <chrono>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 using namespace std;
-using namespace std::chrono;
+//using namespace std::chrono;
 
 void helperMsg(){
     cout<<"input format: solver <input_file>"<<endl;
@@ -175,10 +171,9 @@ public:
 	vector<map<int, int>> clausesRow;
 	vector<map<int, int>> clausesCol;
 
-
 	int numOfClauses;
 	int numOfVariables;
-	
+	bool isConflict;
 	/**
 	 * count and sort variables in each polarity in clauses by frequency in descending order
 	 * 
@@ -290,7 +285,7 @@ Chaff::Chaff(vector<vector<int>>& clauses)
 }
 
 void Chaff::init(vector<vector<int>>& clauses){
-	
+	isConflict = false;
 	// init clausesRow, clausesCol
 	this->clausesRow = vector<map<int, int>>(numOfClauses, map<int, int>());
 	this->clausesCol = vector<map<int, int>>(numOfVariables + 1, map<int, int>());
@@ -325,6 +320,11 @@ void Chaff::init(vector<vector<int>>& clauses){
 		}else{
 			// only one literal in clauses[i]
 			// push the variable in implication table, current stack height is 0
+			int oldLiteral = this->implicationTable[this->clausesRow[i].begin()->first].first;
+			if(oldLiteral != 0 && oldLiteral != this->clausesRow[i].begin()->second){
+				// conflict, return unsatisfiable
+				isConflict = true;
+			}
 			this->implicationTable[this->clausesRow[i].begin()->first] = make_pair(this->clausesRow[i].begin()->second, 0);
 			// TODO: do we need to call bcp() here?
 			this->watchVariable[i][0] = 0;// do not watch variables in this clause anymore
@@ -488,14 +488,19 @@ bool Chaff::resolveConflict(){
 	// can not found "not tried both sides variables"
 	return false;
 }
+
 void Chaff::genModel(){
 	for(int i = 1; i < numOfVariables + 1; i++){
 		int value = decisionTable[i] != 0? decisionTable[i]: implicationTable[i].first;
 		model[i] = value;
 	}
 }
-bool Chaff::solve(){
 
+bool Chaff::solve(){
+	if(isConflict){
+		// conflict in single literal clauses
+		return false;
+	}
 	while(true){
 		if(!decide()){
 			// satisfiable
@@ -509,18 +514,19 @@ bool Chaff::solve(){
 		}
 	}
 }
+
 void Chaff::printModel(){
 	for (int i = 0; i < model.size(); i++)
 	{
 		cout<<model[i]<<" ";
 	}
 	cout<<endl;
-
 }
+
 int main(int argc, char const *argv[])
 {
 	int numVariables, numClauses;
-	char p[10], cnf[10];
+	char p[1000], cnf[100];
 	if(argc != 2){
 		helperMsg();
 		return -1;
@@ -533,14 +539,18 @@ int main(int argc, char const *argv[])
 		return -1;
 	}
 	if(!fscanf(fp,"%s %s %d %d",p, cnf, &numVariables, &numClauses)){
+		cout<<"1"<<endl;
 		formatIllegal();
 		return -1;
 	}
 	if(strcmp(p,"p") || strcmp(cnf, "cnf")){
+		cout<<p<<endl;
+		cout<<cnf<<endl;
 		formatIllegal();
 		return -1;
 	}
 	if(numVariables <= 0 || numClauses <= 0){
+		cout<<"3"<<endl;
 		formatIllegal();
 		return -1;
 	}
@@ -558,6 +568,7 @@ int main(int argc, char const *argv[])
 	 * -1 means false
 	 **/
 	vector<int> model = vector<int>(numVariables + 1, 0);
+	
 	for (int i = 0; i < numClauses; i++)
 	{
 		int num;
@@ -570,10 +581,10 @@ int main(int argc, char const *argv[])
 	}
 	fclose(fp);
 	Chaff chaff(clauses);
-	milliseconds ms_start = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-	cout<<"start solving"<<endl;
+//	milliseconds ms_start = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+//	cout<<"start solving"<<endl;
 	bool isFound = chaff.solve();
-	if(isFound == true){
+	if(isFound == true && isValid(clauses, chaff.model)){
 		cout<<"s SATISFIABLE"<<endl;
 		cout<<"v";
 		for (int j = 1; j < numVariables + 1; j++)
@@ -586,9 +597,8 @@ int main(int argc, char const *argv[])
 	else{
 		cout<<"s UNSATISFIABLE"<<endl;
 	}
-	milliseconds ms_end = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-	cout<<"time elapse: "<<((double)ms_end.count() - ms_start.count()) / 1000<<"s"<<endl;
-	getchar();
+//	milliseconds ms_end = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+//	cout<<"time elapse: "<<((double)ms_end.count() - ms_start.count()) / 1000<<"s"<<endl;
+//	getchar();
 	return 0;
-
 }
