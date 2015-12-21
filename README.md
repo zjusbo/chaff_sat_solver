@@ -1,5 +1,5 @@
 ## SAT SOLVER
-Final project for CPSC 554 at Yale
+Final project for CPSC 454/554 Software Analytics & Varification at Yale
 
 Bo Song, Keshan Liu
 We evenly contributed to this project.
