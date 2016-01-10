@@ -1,37 +1,29 @@
-## SAT SOLVER
-Final project for CPSC 454/554 Software Analytics & Varification at Yale
+## Chaff SAT Solver
+Final project for CPSC 454/554 Software Analytics & Varification at Yale, 2015 Fall
 
-Bo Song, Keshan Liu
-We evenly contributed to this project.
+It is a C++ implementation of Chaff SAT solver.
 
-Implement Chaff SAT solver in C++.
+## How to run it
 
-How to run it
+A makefile is contained in this project, please type following command in the terminal to compile it.
 
-We have already written a makefile in this project, please type following command in the terminal
+ make 
 
-make 
+(It is tested in yale zoo environment.)
 
-(It is tested in zoo environment.)
-
-Features:
+## Features
  - Basic Davis-Putnam Backtrack Search
  - Optimized BCP
  - Variable State Independent Decaying Sum(VSIDS) Decision Heuristic
 
-Input Format:
+## Input Format
+  CNF format
+  
+  For more information about CNF format please visit [http://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html](http://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html) 
 
-  CNF Format.
-  For more information please visit [http://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html](http://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html) 
-
-Reference:
-
+## Reference
  [Chaff: Engineering an Efficient SAT Solver](https://www.princeton.edu/~chaff/publication/DAC2001v56.pdf)
 
-Time it cost
+## Author
+Bo Song, Keshan Liu
 
-It takes us about 3 days to finish this project. One day for reading papers and two days for developing and debug it.
-
-Biggest challenge
-
-Debugging the project. Implement the two variable watching algorithm.
